@@ -44,7 +44,7 @@
   [:div.container
    [:div.row
     [:div.col-md-12
-     "This app is for defining load-testing targets and showing load-testing results"]]])
+     "This app is for load-testing API's, similar in intention to the TodoMVC benchmark.  There are many other possible avenues of performance measurement, and extending some of this functionality to make for real-time monitoring of running API's may be feasible.  It currently does not overload servers in the sense that it doesn't fire off extra requests until after the first request has returned/failed.  It should not be considered an authoritative reference for choosing API backends. This is unlike the way the TodoMVC may be an effective measure for the responsiveness of frameworks for the (mostly) front end."]]])
 
 (defonce counter (reagent/atom 0))
 (defonce test-info (reagent/atom {}))
@@ -82,11 +82,9 @@
   (println (get-testing-errors id)))
 
 (defn clear-all-results []
-  (println "ETC")
   (for [test (:testing @test-info)]
     (let [testId (first test)]
-         (swap! test-info update-in [:testing testId :results] vec [])))
-  (println "TESTING: "(get-in @test-info [:testing 1 :results])))
+         (swap! test-info update-in [:testing testId :results] vec []))))
 
 (defn clear-all-errors []
   (for [test (:testing @test-info)]
@@ -246,11 +244,11 @@
         ;;   [:input.form-control {:type "number"
         ;;                         :value @n-calls
         ;;                         :on-change #(reset! n-calls (-> % .-target .-value))}]]]
-         [:a {:href "#/results"}
           [:button.btn.btn-lg.btn-danger.pull-right {:on-click (fn [e]
                                                                  (doall (for [test (:testing @test-info)]
                                                                           (let [testId (first test)]
-                                                                            (make-ajax-call testId)))))} "Run the Test" ]]]]))
+                                                                            (make-ajax-call testId))))
+                                                                 (session/put! :page :results))} "Run the Test" ]]]))
 
 (defn bar-for-chart [id]
   (let [perf (get-testing-results id) label (get-testing-name id) errors (get-testing-errors id)]
@@ -258,16 +256,12 @@
      [:p label]
      [:div.progress
       [:div.progress-bar.progress-bar-striped.active {:style
-                                                      {
-                                                       ;; :height (str "10%")
-                                                       :width (str (/ (count perf) 10) "%")
-                                                       ;; :background-color "grey"
-                                                       }}] 
+                                                      {:width (str (/ (count perf) 10) "%")}}]
+      
       [:div.progress-bar.progress-bar-striped.progress-bar-warning {:style
-                                                                    {:width (str (/ (count errors) 10) "%")}}]
-      ]
+                                                                    {:width (str (/ (count errors) 10) "%")}}]]
      [:p (str "Avg. Time For Response in ms: " (/ (reduce + perf) (count perf)))]
-     [:p {:style {:color "red"}}"ERRORS: " (count errors)]]))
+     [:p {:style {:color "red"}} "ERRORS: " (count errors)]]))
 
 (defn results []
   [:div.container
@@ -279,7 +273,9 @@
               ^{:key (first test1)} [bar-for-chart (first test1)]))]]
    [:div.row
     [:div.col-md-12
-     [:button.btn.btn-lg.btn-info.pull-right {:on-click (fn [e] )} "Clear Results"]]]])
+     [:button.btn.btn-lg.btn-info.pull-right {:on-click (fn [e]
+                                                          (reset! test-info {})
+                                                          (set-editing!))} "Clear Results"]]]])
 
 (def pages
   {:home #'home-page
