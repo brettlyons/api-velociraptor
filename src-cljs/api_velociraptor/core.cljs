@@ -198,12 +198,10 @@
                                  :on-change #(swap! test-info assoc-in  [:editing :payload] (.-target.value %))}]]]]]))
 
 (defn rm-test-btn [id]
-  [:span.glyphicon.destroy.glyphicon-trash {;:style {:color "white"}
-                                            :title "Delete?"
+  [:span.glyphicon.destroy.glyphicon-trash {:title "Delete?"
                                             :on-click #(del-api-test id)}])
 (defn edit-test-btn [id]
-  [:span.glyphicon.destroy.glyphicon-pencil.pull-right {;:style {:color "white"}
-                                                        :title "Edit?"
+  [:span.glyphicon.destroy.glyphicon-pencil.pull-right {:title "Edit?"
                                                         :on-click #(set-editing! id)}])
 
 (defn name-capsule [id]
@@ -261,6 +259,7 @@
       [:div.progress-bar.progress-bar-striped.progress-bar-warning {:style
                                                                     {:width (str (/ (count errors) 10) "%")}}]]
      [:p (str "Avg. Time For Response in ms: " (/ (reduce + perf) (count perf)))]
+     [:p (str "Avg. Time For Error Response in ms: " (/ (reduce + errors) (count errors)))]
      [:p {:style {:color "red"}} "ERRORS: " (count errors)]]))
 
 (defn results []
