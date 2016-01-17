@@ -1,19 +1,7 @@
 # api-velociraptor
 
-FIXME
+This is was my capstone project for Galvanize Full Stack Immersive.
 
-## Prerequisites
+The curriculum of that six month course was in using the MEAN stack -- So I shipped this using a completely different stack.
 
-You will need [Leiningen][1] 2.0 or above installed.
-
-[1]: https://github.com/technomancy/leiningen
-
-## Running
-
-To start a web server for the application, run:
-
-    lein run
-
-## License
-
-Copyright © 2016 FIXME
+Copyright © 2016 Brett Lyons
